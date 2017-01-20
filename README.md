@@ -15,3 +15,6 @@ Built my own module:
 enumberable.rb is a module based on some methods in enumerable such as #each and #any?
 
 Unfortunately, I'm not yet familar enough with RSpec to test with it so I've included commented tests for each method.
+
+Still needs:
+my_inject needs to take a symbol as an argument and invoke it as operator
