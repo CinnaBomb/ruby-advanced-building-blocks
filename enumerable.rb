@@ -94,12 +94,30 @@ module Enumerable
 			#Still working out how to use the symbol as an operator
 			#self.my_each {|x| accum.send(operator).x}
 		end
-	accum
+		accum
+	end
+
+
+	def my_map_with_proc_or_block (proc=false)
+		if proc != false
+			for item in self
+				proc.call(item)
+			end
+		else
+			for item in self
+				yield(item)
+			end
+		end
+		self
 	end
 
 end
 
 
+
+def multiply_els (array)
+	array.my_inject{|sum, n| sum*n}
+end
 
 #array = [1,2,3,4,5,6,7,8,9,10]
 
@@ -148,7 +166,7 @@ array = [5,6,7,8,9,10]
 #puts array.my_inject{ |sum, n| sum + n }.inspect          #=> 45
 
 # Same using a block
-puts array.my_inject(1) { |product, n| product * n }.inspect #=> 151200
+#puts array.my_inject(1) { |product, n| product * n }.inspect #=> 151200
 
 # find the longest word
 =begin
@@ -157,3 +175,12 @@ longest = %w{ cat sheep bear }.inject do |memo, word|
 end
 puts longest.inspect                                        #=> "sheep"
 =end
+
+#my_map_with_proc_or_block
+hello = Proc.new {|x| puts "I'm a proc and x: #{x}"}
+puts array.my_map_with_proc_or_block(&hello).inspect
+puts array.my_each {|x| puts x*2}.inspect
+
+#multiply_els tests PASSED
+#array = [2,4,5]
+#puts multiply_els(array).inspect
