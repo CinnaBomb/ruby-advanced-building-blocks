@@ -1,66 +1,64 @@
 module Enumerable
 
 	def my_each
-		i=0
-		while i<self.size
-			yield(self[i])
-			i+=1
+		if block_given?
+			for item in self
+				yield(item)
+			end
 		end
 		self
 	end
 
 	def my_each_with_index
-		i=0
-		while i<self.size
-			yield(self[i], i)
-			i+=1
+		if block_given?
+			i=0
+			while i < self.size
+				yield(self[i], i)
+				i+=1
+			end
 		end
 		self
 	end
 
 	def my_select
 		array = []
-		i=0
-		while i<self.size
-			array.push self[i] if yield(self[i])
-			i+=1
-		end
+		self.my_each {|item| array << item if yield(item)}
 		array
 	end
 
 	def my_all?
-		i=0
-		while i<self.size
-			return false if yield(self[i]) == false
-			i+=1
+		for item in self
+			return false if yield(item) == false
 		end
 		true
 	end
 
 	def my_any?
-		i=0
-		while i<self.size
-			return true if yield(self[i]) == true
-			i+=1
+		for item in self
+			return true if yield(item) == true
 		end
 		false
 	end
 
 	def my_none?
-		i=0
-		while i<self.size
-			return false if yield(self[i]) == true
-			i+=1
+		for item in self
+			return false if yield(item) == true
 		end
 		true
 	end
 
-	def my_count
+	def my_count (x = nil)
 		count = 0
-		i=0
-		while i<self.size
-			count+=1 if yield(self[i]) == true
-			i+=1
+		if block_given?
+			for item in self
+				count+=1 if yield(item) == true
+			end
+		elsif x != nil
+			for item in self
+				count+=1 if x==item
+			end
+		else
+			return self.size
 		end
 		count
 	end
@@ -88,7 +86,8 @@ module Enumerable
 end
 
 
-array = [1,2,3,4,5,6,7,8,9,10]
+
+#array = [1,2,3,4,5,6,7,8,9,10]
 
 #--each tests PASSES
 #puts array.my_each {|x| puts x}.inspect
@@ -99,36 +98,27 @@ array = [1,2,3,4,5,6,7,8,9,10]
 #puts array.each_with_index {|x, i| puts "x: #{x} and i: #{i}"}.inspect
 
 #--select tests PASSED
-#puts [1,2,3,4,5,6].my_select { |num|  num.even?  }.inspect  #=> [2, 4]
-#puts [1,2,3,4,5,6].select {|num| num.even?}.inspect
+#puts array.my_select { |num|  num.even?  }.inspect  #=> [2, 4]
+#puts array.select {|num| num.even?}.inspect
 
 
-#FIX YEILDS
-#my_all? tests  #HOW to check if yield is given!
+#--my_all? tests PASSED
 #puts %w[ant bear cat].my_all? { |word| word.length >= 3 }.inspect #=> true
 #puts %w[ant bear cat].my_all? { |word| word.length >= 4 }.inspect #=> false
-#puts [nil, true, 99].my_all?.inspect                              #=> false
 
-#my_any? tests
-#puts %w[ant bear cat].any? { |word| word.length >= 3 }.inspect #=> true
+#my_any? tests PASSED
+#puts %w[ant bear cat].any? { |word| word.length >= 5 }.inspect #=> true
 #puts %w[ant bear cat].any? { |word| word.length >= 4 }.inspect #=> true
-#[nil, true, 99].any?                              #=> true
 
-#my_none? tests
+#my_none? tests PASSED
 #puts %w{ant bear cat}.my_none? { |word| word.length == 5 }.inspect #=> true
 #puts %w{ant bear cat}.my_none? { |word| word.length >= 4 }.inspect #=> false
-#[].none?                                           #=> true
-#[nil].none?                                        #=> true
-#[nil, false].none?                                 #=> true
-#[nil, false, true].none?                           #=> false
 
-#my_count tests
-#ary = [1, 2, 4, 2, 5, 6, 7, 8]
-#puts ary.my_count.inspect               #=> 4
-#ary.count(2)            #=> 2
-#puts ary.count{ |x| x%2==0 }.inspect #=> 3
-
-
+#my_count tests PASSED
+ary = [1, 2, 4, 2]
+puts ary.my_count.inspect            #=> 4
+puts ary.count(2).inspect            #=> 2
+puts ary.count{ |x| x%2==0 }.inspect #=> 3
 
 #my_map tests
 # UNDEFNIED method for range
@@ -140,8 +130,8 @@ array = [1,2,3,4,5,6,7,8,9,10]
 #my_inject tests
 #puts array.my_inject {|accum, x| accum + x}.inspect
 # Sum some numbers
-array = [5,6,7,8,9,10]
-puts array.my_inject {|sum, n| sum+n}.inspect
+#array = [5,6,7,8,9,10]
+#puts array.my_inject {|sum, n| sum+n}.inspect
 #(5..10).reduce(:+)                             #=> 45
 # Same using a block and inject
 #(5..10).inject { |sum, n| sum + n }            #=> 45

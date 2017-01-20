@@ -1,4 +1,3 @@
-
 Proejcts based on Odin Project Guidelines from:
 
 http://www.theodinproject.com/courses/ruby-programming/lessons/advanced-building-blocks
@@ -14,3 +13,5 @@ bubble_sort_by.rb takes an array and a block is passed to it so that the sorting
 Built my own module:
 
 enumberable.rb is a module based on some methods in enumerable such as #each and #any?
+
+Unfortunately, I'm not yet familar enough with RSpec to test with it so I've included commented tests for each method.
