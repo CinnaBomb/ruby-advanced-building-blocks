@@ -65,22 +65,36 @@ module Enumerable
 
 	def my_map
 		array = []
-		i=0
-		while i<self.size
-			array.push(yield(self[i]))
-			i+=1
+		for item in self
+			array << yield(item)
 		end
 		array
 	end
 
-	def my_inject
-		count = 0
-		i=0
-		while i<self.size
-			count+=yield(count, self[i])
-			i+=1
+
+	def my_inject (*args)
+		if args.count ==2
+			accum = args[0]
+			operator = args[1]
+		elsif args.count == 1
+			if args[0].is_a? Symbol
+				operator = args[0]
+			else
+				accum = args[0]
+			end
 		end
-		count
+
+		if accum == nil
+			accum = self.shift
+		end
+
+		if block_given?
+			self.my_each {|x| accum = yield(accum, x)}
+		else
+			#Still working out how to use the symbol as an operator
+			#self.my_each {|x| accum.send(operator).x}
+		end
+	accum
 	end
 
 end
@@ -91,15 +105,12 @@ end
 
 #--each tests PASSES
 #puts array.my_each {|x| puts x}.inspect
-#puts array.each {|x| puts x}.inspect
 
 #--each_with_index tests PASSED
 #puts array.my_each_with_index {|x, i| puts "x: #{x} and i: #{i}"}.inspect
-#puts array.each_with_index {|x, i| puts "x: #{x} and i: #{i}"}.inspect
 
 #--select tests PASSED
 #puts array.my_select { |num|  num.even?  }.inspect  #=> [2, 4]
-#puts array.select {|num| num.even?}.inspect
 
 
 #--my_all? tests PASSED
@@ -107,42 +118,42 @@ end
 #puts %w[ant bear cat].my_all? { |word| word.length >= 4 }.inspect #=> false
 
 #my_any? tests PASSED
-#puts %w[ant bear cat].any? { |word| word.length >= 5 }.inspect #=> true
-#puts %w[ant bear cat].any? { |word| word.length >= 4 }.inspect #=> true
+#puts %w[ant bear cat].my_any? { |word| word.length >= 5 }.inspect #=> false
+#puts %w[ant bear cat].my_any? { |word| word.length >= 4 }.inspect #=> true
 
 #my_none? tests PASSED
 #puts %w{ant bear cat}.my_none? { |word| word.length == 5 }.inspect #=> true
 #puts %w{ant bear cat}.my_none? { |word| word.length >= 4 }.inspect #=> false
 
 #my_count tests PASSED
-ary = [1, 2, 4, 2]
-puts ary.my_count.inspect            #=> 4
-puts ary.count(2).inspect            #=> 2
-puts ary.count{ |x| x%2==0 }.inspect #=> 3
+#ary = [1, 2, 4, 2]
+#puts ary.my_count.inspect            #=> 4
+#puts ary.my_count(2).inspect            #=> 2
+#puts ary.my_count{ |x| x%2==0 }.inspect #=> 3
 
-#my_map tests
-# UNDEFNIED method for range
-#puts array.map {|i| i*i}.inspect
-#puts (1..4).map{ |i| i*i }.inspect 
-#puts (1..4).my_map { |i| i*i }.inspect      #=> [1, 4, 9, 16]
-#puts (1..4).my_map { "cat"  }.inspect   #=> ["cat", "cat", "cat", "cat"]
+#my_map tests PASSED
+#array = [1,2,3,4]
+#puts array.my_map { |i| i*i }.inspect      #=> [1, 4, 9, 16]
+#puts array.my_map { "cat"  }.inspect   #=> ["cat", "cat", "cat", "cat"]
 
-#my_inject tests
-#puts array.my_inject {|accum, x| accum + x}.inspect
+
+#my_inject tests MOSTLY PASSED
+array = [5,6,7,8,9,10]
+
+#NOT PASSED YET, need to figure out passing symbols as operators
 # Sum some numbers
-#array = [5,6,7,8,9,10]
-#puts array.my_inject {|sum, n| sum+n}.inspect
-#(5..10).reduce(:+)                             #=> 45
+#puts array.my_inject(:+).inspect                             #=> 45
+
 # Same using a block and inject
-#(5..10).inject { |sum, n| sum + n }            #=> 45
-# Multiply some numbers
-#(5..10).reduce(1, :*)                          #=> 151200
+#puts array.my_inject{ |sum, n| sum + n }.inspect          #=> 45
+
 # Same using a block
-#(5..10).inject(1) { |product, n| product * n } #=> 151200
+puts array.my_inject(1) { |product, n| product * n }.inspect #=> 151200
+
 # find the longest word
 =begin
 longest = %w{ cat sheep bear }.inject do |memo, word|
    memo.length > word.length ? memo : word
 end
-longest                                        #=> "sheep"
+puts longest.inspect                                        #=> "sheep"
 =end
