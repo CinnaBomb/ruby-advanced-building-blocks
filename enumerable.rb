@@ -156,7 +156,7 @@ end
 
 
 #my_inject tests MOSTLY PASSED
-array = [5,6,7,8,9,10]
+#array = [5,6,7,8,9,10]
 
 #NOT PASSED YET, need to figure out passing symbols as operators
 # Sum some numbers
@@ -177,9 +177,9 @@ puts longest.inspect                                        #=> "sheep"
 =end
 
 #my_map_with_proc_or_block
-hello = Proc.new {|x| puts "I'm a proc and x: #{x}"}
-puts array.my_map_with_proc_or_block(&hello).inspect
-puts array.my_each {|x| puts x*2}.inspect
+#hello = Proc.new {|x| puts "I'm a proc and x: #{x}"}
+#puts array.my_map_with_proc_or_block(&hello).inspect
+#puts array.my_each {|x| puts x*2}.inspect
 
 #multiply_els tests PASSED
 #array = [2,4,5]
